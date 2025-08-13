@@ -20,10 +20,18 @@ export default [
     rules: {
       ...tseslint.configs.recommended.rules,
       ...prettierConfig.rules,
+      "no-console": "off",
       "@typescript-eslint/no-unused-vars": "warn",
-      "no-console": "warn",
+      "no-console": "off",
       semi: ["error", "always"],
       quotes: ["error", "double"],
+      "trailing-comma": [
+        "error",
+        {
+          multiline: "always",
+          singleline: "never",
+        },
+      ],
       "prettier/prettier": "error",
     },
   },

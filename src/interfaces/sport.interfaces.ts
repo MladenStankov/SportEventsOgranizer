@@ -1,5 +1,5 @@
-import { IEvent, IParticipant } from "./event-interfaces";
-import { SkillLevelType, SportType } from "../types/sport-types";
+import { IEvent, IParticipant } from "./event.interfaces";
+import { SkillLevelType, SportType } from "../types/sport.types";
 
 export interface IPlayer extends IParticipant {
   sportSkills: Map<SportType, SkillLevelType>;
