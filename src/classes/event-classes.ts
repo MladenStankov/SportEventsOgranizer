@@ -43,7 +43,7 @@ export class Event<TParticipant extends IParticipant = IParticipant>
   }
 
   addParticipant(participant: TParticipant): void {
-    if (this.eventParticipants.length > this.maxEventParticipants) {
+    if (this.eventParticipants.length >= this.maxEventParticipants) {
       console.log("Cannot add participant, event is full.");
       return;
     }
