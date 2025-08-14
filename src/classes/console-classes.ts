@@ -73,6 +73,12 @@ export abstract class EventConsoleProgram<
         this.eventOrganizer.events = [];
       }
 
+      const lastEventID = this.eventOrganizer.events.reduce(
+        (maxId, event) => Math.max(maxId, event.id),
+        0
+      );
+      Event.nextId = lastEventID + 1;
+
       // Load participants
       if (Array.isArray(jsonData.participants)) {
         this.eventOrganizer.participants = jsonData.participants.map(
@@ -87,6 +93,12 @@ export abstract class EventConsoleProgram<
       } else {
         this.eventOrganizer.participants = [];
       }
+
+      const lastParticipantID = this.eventOrganizer.participants.reduce(
+        (maxId, participant) => Math.max(maxId, participant.id),
+        0
+      );
+      Participant.nextId = lastParticipantID + 1;
     } catch (error) {
       console.error("Error loading data:", error);
       this.eventOrganizer.events = [];

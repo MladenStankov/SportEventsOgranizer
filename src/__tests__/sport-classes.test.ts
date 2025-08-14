@@ -44,7 +44,7 @@ describe("SportEvent", () => {
     const sportSkills: Record<SportType, SkillLevelType> = {
       [SportType.FOOTBALL]: SkillLevelType.ADVANCED,
       [SportType.BASKETBALL]: SkillLevelType.AVERAGE,
-      [SportType.TENNIS]: SkillLevelType.BEGINNER
+      [SportType.TENNIS]: SkillLevelType.BEGINNER,
     };
     player = new Player("John", "Doe", sportSkills);
   });

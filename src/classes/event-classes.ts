@@ -5,7 +5,7 @@ import {
 } from "../interfaces/event-interfaces.js";
 
 export class Participant implements IParticipant {
-  protected static nextId = 1;
+  public static nextId = 1;
   public id: number;
 
   constructor(
@@ -27,7 +27,7 @@ export class Participant implements IParticipant {
 export class Event<TParticipant extends IParticipant = IParticipant>
   implements IEvent<TParticipant>
 {
-  private static nextId = 1;
+  public static nextId = 1;
   public eventParticipants: TParticipant[] = [];
   public id: number;
 
