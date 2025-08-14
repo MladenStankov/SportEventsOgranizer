@@ -2,7 +2,6 @@ import { Participant } from "../classes/event-classes.js";
 
 describe("Participant", () => {
   beforeEach(() => {
-    // Reset the static nextId before each test
     (Participant as any).nextId = 1;
   });
 

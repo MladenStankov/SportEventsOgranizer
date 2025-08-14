@@ -1,4 +1,5 @@
 import readline from "readline";
+import fs from "fs/promises";
 import {
   IConsoleProgram,
   IEventConsoleProgram,
@@ -44,15 +45,64 @@ export abstract class EventConsoleProgram<
 {
   eventOrganizer: TEventOrganizer = {} as TEventOrganizer;
 
-  constructor(JSONFilePath: string) {
+  constructor(
+    JSONFilePath: string,
+    private EventConstructor: new (...args: any[]) => TEvent,
+    private ParticipantConstructor: new (...args: any[]) => TParticipant
+  ) {
     super(JSONFilePath);
   }
-  loadData(): Promise<void> {
-    throw new Error("Method not implemented.");
+  async loadData(): Promise<void> {
+    try {
+      const fileContent = await fs.readFile(this.JSONFilePath, "utf-8");
+      const jsonData = JSON.parse(fileContent);
+
+      // Load events
+      if (Array.isArray(jsonData.events)) {
+        this.eventOrganizer.events = jsonData.events.map((eventData: any) => {
+          const event = Object.assign(
+            Object.create(this.EventConstructor.prototype),
+            {
+              ...eventData,
+              date: new Date(eventData.date),
+            }
+          );
+          return event;
+        });
+      } else {
+        this.eventOrganizer.events = [];
+      }
+
+      // Load participants
+      if (Array.isArray(jsonData.participants)) {
+        this.eventOrganizer.participants = jsonData.participants.map(
+          (participantData: any) => {
+            const participant = Object.assign(
+              Object.create(this.ParticipantConstructor.prototype),
+              participantData
+            );
+            return participant;
+          }
+        );
+      } else {
+        this.eventOrganizer.participants = [];
+      }
+    } catch (error) {
+      console.error("Error loading data:", error);
+      this.eventOrganizer.events = [];
+      this.eventOrganizer.participants = [];
+    }
   }
-  saveData(): Promise<void> {
-    throw new Error("Method not implemented.");
+
+  async saveData(): Promise<void> {
+    const data = {
+      events: this.eventOrganizer.events,
+      participants: this.eventOrganizer.participants,
+    };
+
+    await fs.writeFile(this.JSONFilePath, JSON.stringify(data, null, 2));
   }
+
   async createParticipant(): Promise<Participant | void> {
     const firstName = await super.askQuestion(
       "Enter participant's first name: "
@@ -113,7 +163,7 @@ export abstract class EventConsoleProgram<
   }
 
   async startMenuLoop(): Promise<void> {
-    // this.loadData();
+    await this.loadData();
     while (true) {
       console.log("\n=== Event Management System ===");
       console.log("1. Create Event");
@@ -123,7 +173,7 @@ export abstract class EventConsoleProgram<
       console.log("5. Remove Participant from Event");
       console.log("6. Print Participants Info");
       console.log("7. Print Events History");
-      console.log("8. Exit");
+      console.log("8. Exit and Save data");
       console.log("===========================");
 
       const choice = await this.askQuestion("Enter your choice (1-8): ");
@@ -152,7 +202,7 @@ export abstract class EventConsoleProgram<
             this.eventOrganizer.printEventsHistory();
             break;
           case "8":
-            console.log("Goodbye!");
+            await this.saveData();
             this.rl.close();
             return;
           default:
@@ -161,8 +211,8 @@ export abstract class EventConsoleProgram<
       } catch (error) {
         console.error("Error:", error instanceof Error ? error.message : error);
         await this.askQuestion("\nPress Enter to continue...");
+      } finally {
       }
-      // this.saveData();
     }
   }
 }
@@ -177,13 +227,7 @@ export class SportEventConsoleProgram
   >([], []);
 
   constructor(public JSONFilePath: string) {
-    super(JSONFilePath);
-  }
-  loadData(): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-  saveData(): Promise<void> {
-    throw new Error("Method not implemented.");
+    super(JSONFilePath, SportEvent, Player);
   }
 
   async createParticipant(): Promise<Participant | void> {
@@ -194,7 +238,10 @@ export class SportEventConsoleProgram
       );
     }
 
-    const sportSkills = new Map<SportType, SkillLevelType>();
+    let sportSkills: Record<SportType, SkillLevelType> = {} as Record<
+      SportType,
+      SkillLevelType
+    >;
 
     for (const sportType of Object.values(SportType).filter(
       (v) => typeof v === "string"
@@ -220,10 +267,8 @@ export class SportEventConsoleProgram
         );
       }
 
-      sportSkills.set(
-        SportType[sportType as keyof typeof SportType],
-        SkillLevelType[skillLevel as keyof typeof SkillLevelType]
-      );
+      sportSkills[SportType[sportType as keyof typeof SportType]] =
+        SkillLevelType[skillLevel as keyof typeof SkillLevelType];
     }
 
     const player = new Player(
@@ -308,7 +353,7 @@ export class SportEventConsoleProgram
 
     const { event, participant } = result;
 
-    const skillLevel = participant.sportSkills.get(event.sport);
+    const skillLevel = participant.sportSkills[event.sport];
     if (skillLevel == undefined || skillLevel < event.requiredSkillLevel) {
       console.log(
         `Participant ${participant.firstName} ${participant.lastName} does not meet the required skill level for this event.`

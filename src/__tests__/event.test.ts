@@ -6,7 +6,6 @@ describe("Event", () => {
   let participant2: Participant;
 
   beforeEach(() => {
-    // Reset static IDs
     (Event as any).nextId = 1;
     (Participant as any).nextId = 1;
 

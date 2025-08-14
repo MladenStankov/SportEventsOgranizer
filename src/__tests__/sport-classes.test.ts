@@ -3,22 +3,22 @@ import { SportType, SkillLevelType } from "../types/sport-types.js";
 
 describe("Player", () => {
   beforeEach(() => {
-    // Reset the static nextId before each test
     (Player as any).nextId = 1;
   });
 
   test("creates player with correct properties", () => {
-    const sportSkills = new Map([
-      [SportType.FOOTBALL, SkillLevelType.ADVANCED],
-      [SportType.BASKETBALL, SkillLevelType.AVERAGE],
-    ]);
+    const sportSkills: Record<SportType, SkillLevelType> = {
+      [SportType.FOOTBALL]: SkillLevelType.ADVANCED,
+      [SportType.BASKETBALL]: SkillLevelType.AVERAGE,
+      [SportType.TENNIS]: SkillLevelType.BEGINNER,
+    };
     const player = new Player("John", "Doe", sportSkills);
 
     expect(player.firstName).toBe("John");
     expect(player.lastName).toBe("Doe");
     expect(player.id).toBe(1);
     expect(player.sportSkills).toBe(sportSkills);
-    expect(player.sportSkills.get(SportType.FOOTBALL)).toBe(
+    expect(player.sportSkills[SportType.FOOTBALL]).toBe(
       SkillLevelType.ADVANCED
     );
   });
@@ -29,7 +29,6 @@ describe("SportEvent", () => {
   let player: Player;
 
   beforeEach(() => {
-    // Reset static IDs
     (SportEvent as any).nextId = 1;
     (Player as any).nextId = 1;
 
@@ -42,9 +41,11 @@ describe("SportEvent", () => {
       SkillLevelType.ADVANCED
     );
 
-    const sportSkills = new Map([
-      [SportType.FOOTBALL, SkillLevelType.ADVANCED],
-    ]);
+    const sportSkills: Record<SportType, SkillLevelType> = {
+      [SportType.FOOTBALL]: SkillLevelType.ADVANCED,
+      [SportType.BASKETBALL]: SkillLevelType.AVERAGE,
+      [SportType.TENNIS]: SkillLevelType.BEGINNER
+    };
     player = new Player("John", "Doe", sportSkills);
   });
 

@@ -6,7 +6,7 @@ export class Player extends Participant implements IPlayer {
   constructor(
     firstName: string,
     lastName: string,
-    public sportSkills: Map<SportType, SkillLevelType>
+    public sportSkills: Record<SportType, SkillLevelType>
   ) {
     super(firstName, lastName, true);
   }
@@ -14,8 +14,8 @@ export class Player extends Participant implements IPlayer {
   printInfo(): void {
     super.printInfo();
     console.log("Sport Skills:");
-    this.sportSkills.forEach((level, sport) => {
-      console.log(` - ${SportType[sport]}: ${SkillLevelType[level]}`);
+    Object.entries(this.sportSkills).forEach(([sport, level]) => {
+      console.log(` - ${SportType[Number(sport)]}: ${SkillLevelType[level]}`);
     });
   }
 }
