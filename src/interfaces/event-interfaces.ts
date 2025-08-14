@@ -7,6 +7,7 @@ export interface IParticipant {
 }
 
 export interface IEvent<TParticipant extends IParticipant = IParticipant> {
+  id: number;
   date: Date;
   durationInMinutes: number;
 
@@ -27,7 +28,12 @@ export interface IEventOrganizer<
   participants: TParticipant[];
 
   createEvent(event: TEvent): void;
+
   createParticipant(participant: TParticipant): void;
+  deleteParticipant(id: number): void;
+
+  addParticipantToEvent(event: TEvent, participant: TParticipant): void;
+  removeParticipantFromEvent(eventId: number, participantId: number): void;
 
   printEventsHistory(): void;
   printParticipantsList(): void;

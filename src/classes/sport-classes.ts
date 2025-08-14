@@ -1,22 +1,21 @@
-import { IPlayer, ISportEvent } from "../interfaces/sport.interfaces";
-import { SportType, SkillLevelType } from "../types/sport.types";
-import { Event, Participant } from "./event.classes";
+import { IPlayer, ISportEvent } from "../interfaces/sport-interfaces.js";
+import { SportType, SkillLevelType } from "../types/sport-types.js";
+import { Event, Participant } from "./event-classes.js";
 
 export class Player extends Participant implements IPlayer {
   constructor(
-    id: number,
     firstName: string,
     lastName: string,
     public sportSkills: Map<SportType, SkillLevelType>
   ) {
-    super(id, firstName, lastName);
+    super(firstName, lastName, true);
   }
 
   printInfo(): void {
     super.printInfo();
     console.log("Sport Skills:");
     this.sportSkills.forEach((level, sport) => {
-      console.log(` - ${sport}: ${level}`);
+      console.log(` - ${SportType[sport]}: ${SkillLevelType[level]}`);
     });
   }
 }
@@ -30,13 +29,15 @@ export class SportEvent extends Event<Player> implements ISportEvent {
     public sport: SportType,
     public requiredSkillLevel: SkillLevelType
   ) {
-    super(date, durationInMinutes, maxEventParticipants);
+    super(date, durationInMinutes, maxEventParticipants, true);
   }
 
   printInfo(): void {
     super.printInfo();
     console.log(`Field Name: ${this.fieldName}`);
-    console.log(`Sport: ${this.sport}`);
-    console.log(`Required Skill Level: ${this.requiredSkillLevel}`);
+    console.log(`Sport: ${SportType[this.sport]}`);
+    console.log(
+      `Required Skill Level: ${SkillLevelType[this.requiredSkillLevel]}`
+    );
   }
 }

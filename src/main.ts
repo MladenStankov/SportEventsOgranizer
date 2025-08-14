@@ -1,8 +1,8 @@
-import { ConsoleProgram } from "./classes/console.classes.js";
-import { SportEvent } from "./classes/sport.classes.js";
+import { SportEventConsoleProgram } from "./classes/console-classes.js";
 
 async function main() {
-  const program = new ConsoleProgram<SportEvent>("organizer.json");
+  const program = new SportEventConsoleProgram("sport.json");
+  await program.startMenuLoop();
 }
 
 main();
